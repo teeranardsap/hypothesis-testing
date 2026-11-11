@@ -36,7 +36,6 @@
             margin: 0 auto;
         }
 
-        /* ส่วนหัว ไม่มีคำว่าคาบ มีป้ายบอกเวอร์ชัน */
         .header {
             background: linear-gradient(135deg, #1e3a8a, #3b82f6);
             color: white;
@@ -56,13 +55,12 @@
         .version-badge {
             display: inline-block;
             background: rgba(255, 255, 255, 0.2);
-            padding: 2px 10px;
+            padding: 3px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 12.5px;
             margin-top: 6px;
         }
 
-        /* การ์ดความรู้ 2 ฝั่ง ปูพื้นฐานสำหรับคนไม่มีความรู้ */
         .intro-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -118,17 +116,32 @@
             color: #0f172a;
         }
 
-        select, input[type="number"], input[type="range"] {
+        select, input[type="number"] {
             width: 100%;
             box-sizing: border-box;
-            padding: 8px;
+            padding: 8px 10px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-family: inherit;
-            font-size: 13.5px;
+            font-size: 14px;
         }
 
-        /* ป้ายแจ้งเตือนการตัดสินใจสด */
+        /* กล่องควบคุมแบบมีทั้งพิมพ์และสไลด์ */
+        .dual-control {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .dual-control input[type="range"] {
+            flex: 2;
+        }
+
+        .dual-control input[type="number"] {
+            flex: 1;
+            padding: 6px;
+        }
+
         .decision-banner {
             padding: 16px 20px;
             border-radius: 10px;
@@ -183,7 +196,6 @@
             margin-bottom: 18px;
         }
 
-        /* การ์ดตัวอย่างโจทย์จริงพร้อมเฉลย */
         .example-box {
             background: #ffffff;
             border: 2px solid #bbf7d0;
@@ -219,7 +231,6 @@
             text-align: center;
         }
 
-        /* Tooltip สัญลักษณ์คณิตศาสตร์ เอาเมาส์ชี้ขึ้นคำอธิบาย */
         .math-tag {
             display: inline-flex;
             align-items: center;
@@ -280,16 +291,15 @@
 <body>
 
 <div class="container">
-    <!-- ส่วนหัว ไม่มีคำว่าคาบ -->
     <div class="header">
         <h1>การทดสอบสมมุติฐาน (Hypothesis Testing)</h1>
-        <div class="version-badge">✨ เวอร์ชันอัปเกรดล่าสุด: แสดงสูตรชัดเจน + เฉลยตัวอย่างโจทย์</div>
+        <div class="version-badge">✨ สามารถพิมพ์กำหนดค่าตัวเลขต่างๆ ได้เองอย่างอิสระ</div>
         <p style="margin: 8px 0 0 0; font-size: 14.5px; opacity: 0.95;">
             เครื่องมือตรวจสอบความจริงเชิงสถิติ: ใช้ข้อมูลตัวอย่างเพื่อตัดสินว่าความเชื่อเดิมนั้น "ยังเชื่อได้อยู่" หรือ "ต้องปฏิเสธ"
         </p>
     </div>
 
-    <!-- ส่วนปูพื้นฐานสำหรับคนไม่มีพื้นฐาน -->
+    <!-- ส่วนปูพื้นฐาน -->
     <div class="intro-grid">
         <div class="intro-box" style="border-left: 5px solid #2563eb;">
             <h3 style="color: #1e3a8a;">⚖️ 1. เราทำการทดสอบสมมุติฐาน "เพื่ออะไร"?</h3>
@@ -311,9 +321,9 @@
     </div>
 
     <div class="grid-layout">
-        <!-- Sidebar แผงควบคุมตัวเลข -->
+        <!-- Sidebar แผงป้อนตัวเลขที่พิมพ์ได้เองทุกช่อง -->
         <div class="sidebar">
-            <h3 style="margin-top:0; color: #1e3a8a; font-size: 16px;">⚙️ ป้อนข้อมูลเพื่อทดสอบ</h3>
+            <h3 style="margin-top:0; color: #1e3a8a; font-size: 16px;">⚙️ ป้อนค่าตัวเลขตามโจทย์</h3>
 
             <div class="form-group">
                 <label>1. เลือกสถิติทดสอบ:</label>
@@ -337,18 +347,23 @@
                 </select>
             </div>
 
+            <!-- ระดับนัยสำคัญ: พิมพ์ตัวเลขได้โดยตรง หรือจะเลื่อนสไลเดอร์ก็ได้ -->
             <div class="form-group">
                 <label>
                     3. ระดับนัยสำคัญ 
                     (<span class="math-tag" tabindex="0">α
-                        <span class="tooltip-card"><b>แอลฟา (α):</b> ระดับความผิดพลาดสูงสุดที่เรายอมรับได้ที่จะเผลอปฏิเสธ H₀ ทั้งที่ H₀ ถูกต้อง ปกตินิยมใช้ 0.05 (5%)</span>
-                    </span>): <span id="alphaDisp" style="float:right; font-weight:bold; color:#0284c7;">0.05</span>
+                        <span class="tooltip-card"><b>แอลฟา (α):</b> ระดับความผิดพลาดสูงสุดที่เรายอมรับได้ที่จะเผลอปฏิเสธ H₀ ทั้งที่ H₀ ถูกต้อง ปกตินิยมใช้ 0.05, 0.01 หรือ 0.10</span>
+                    </span>):
                 </label>
-                <input type="range" id="alphaRange" min="0.01" max="0.10" step="0.01" value="0.05" oninput="syncAlpha(); runTest();">
+                <div class="dual-control">
+                    <input type="range" id="alphaRange" min="0.005" max="0.10" step="0.005" value="0.05" oninput="syncInputs('alphaRange', 'alphaNum'); runTest();">
+                    <input type="number" id="alphaNum" min="0.001" max="0.20" step="0.005" value="0.05" oninput="syncInputs('alphaNum', 'alphaRange'); runTest();">
+                </div>
             </div>
 
             <hr style="border:0; border-top: 1px dashed var(--border); margin: 16px 0;">
 
+            <!-- ค่าพารามิเตอร์โจทย์ พิมพ์ได้อิสระ -->
             <div class="form-group">
                 <label>
                     ค่าเฉลี่ยตามความเชื่อเดิม 
@@ -356,17 +371,17 @@
                         <span class="tooltip-card"><b>μ₀ (Null Value):</b> ตัวเลขค่าเฉลี่ยตามมาตรฐานเดิมที่ระบุไว้ใน H₀</span>
                     </span>):
                 </label>
-                <input type="number" id="mu0Input" value="50" step="1" oninput="runTest()">
+                <input type="number" id="mu0Input" value="50" step="0.5" oninput="runTest()">
             </div>
 
             <div class="form-group">
                 <label>
                     ขนาดตัวอย่างที่สุ่มตรวจ 
                     (<span class="math-tag" tabindex="0">n
-                        <span class="tooltip-card"><b>n (Sample Size):</b> จำนวนข้อมูลที่เราสุ่มมาตรวจสอบจริง</span>
+                        <span class="tooltip-card"><b>n (Sample Size):</b> จำนวนข้อมูลที่เราสุ่มมาตรวจสอบจริง สามารถพิมพ์ตัวเลขได้ตามโจทย์</span>
                     </span>):
                 </label>
-                <input type="number" id="nInput" value="16" min="2" max="500" step="1" oninput="runTest()">
+                <input type="number" id="nInput" value="16" min="2" max="5000" step="1" oninput="runTest()">
             </div>
 
             <div class="form-group">
@@ -376,17 +391,17 @@
                         <span class="tooltip-card"><b>X̄ (Sample Mean):</b> ค่าเฉลี่ยที่คำนวณได้จากกลุ่มตัวอย่าง n ตัว</span>
                     </span>):
                 </label>
-                <input type="number" id="xbarInput" value="53" step="0.5" oninput="runTest()">
+                <input type="number" id="xbarInput" value="53" step="0.1" oninput="runTest()">
             </div>
 
             <div class="form-group">
                 <label>
                     ส่วนเบี่ยงเบนมาตรฐาน 
                     (<span class="math-tag" tabindex="0">σ หรือ s
-                        <span class="tooltip-card"><b>σ หรือ s:</b> ส่วนเบี่ยงเบนมาตรฐานของการกระจายข้อมูล</span>
+                        <span class="tooltip-card"><b>σ หรือ s:</b> ส่วนเบี่ยงเบนมาตรฐานของการกระจายข้อมูลตามโจทย์</span>
                     </span>):
                 </label>
-                <input type="number" id="sdInput" value="6" min="0.1" step="0.5" oninput="runTest()">
+                <input type="number" id="sdInput" value="6" min="0.01" step="0.1" oninput="runTest()">
             </div>
         </div>
 
@@ -485,17 +500,17 @@
 </div>
 
 <script>
-    function syncAlpha() {
-        document.getElementById('alphaDisp').innerText = parseFloat(document.getElementById('alphaRange').value).toFixed(2);
+    function syncInputs(fromId, toId) {
+        document.getElementById(toId).value = document.getElementById(fromId).value;
     }
 
     function runTest() {
         const statType = document.getElementById('statType').value;
         const tailType = document.getElementById('tailType').value;
-        const alpha = parseFloat(document.getElementById('alphaRange').value);
-        const mu0 = parseFloat(document.getElementById('mu0Input').value);
+        const alpha = parseFloat(document.getElementById('alphaNum').value) || 0.05;
+        const mu0 = parseFloat(document.getElementById('mu0Input').value) || 0;
         const n = parseInt(document.getElementById('nInput').value) || 16;
-        const xbar = parseFloat(document.getElementById('xbarInput').value);
+        const xbar = parseFloat(document.getElementById('xbarInput').value) || 0;
         const sd = parseFloat(document.getElementById('sdInput').value) || 1;
 
         const se = sd / Math.sqrt(n);
@@ -552,10 +567,10 @@
         const card = document.getElementById('decisionCard');
         if (isReject) {
             card.className = "decision-banner reject-bg";
-            card.innerHTML = `🚨 ตัดสินใจ: ปฏิเสธ H₀ (Reject H₀) ที่ระดับนัยสำคัญ α = ${alpha.toFixed(2)}<br><span style="font-size:13px; font-weight:normal;">หลักฐานหนักแน่นพอ (p-value ≤ α หรือ ค่าสถิติคำนวณทะลุเข้าเขตสีแดง) มีนัยสำคัญทางสถิติ!</span>`;
+            card.innerHTML = `🚨 ตัดสินใจ: ปฏิเสธ H₀ (Reject H₀) ที่ระดับนัยสำคัญ α = ${alpha.toFixed(3)}<br><span style="font-size:13px; font-weight:normal;">หลักฐานหนักแน่นพอ (p-value ≤ α หรือ ค่าสถิติคำนวณทะลุเข้าเขตสีแดง) มีนัยสำคัญทางสถิติ!</span>`;
         } else {
             card.className = "decision-banner accept-bg";
-            card.innerHTML = `✅ ตัดสินใจ: ไม่ปฏิเสธ / ยอมรับ H₀ (Fail to Reject H₀) ที่ระดับนัยสำคัญ α = ${alpha.toFixed(2)}<br><span style="font-size:13px; font-weight:normal;">หลักฐานยังไม่พอ (p-value > α หรือ ค่าสถิติตกอยู่นอกเขตวิกฤต) ยังคงยึดถือความเชื่อเดิมไว้</span>`;
+            card.innerHTML = `✅ ตัดสินใจ: ไม่ปฏิเสธ / ยอมรับ H₀ (Fail to Reject H₀) ที่ระดับนัยสำคัญ α = ${alpha.toFixed(3)}<br><span style="font-size:13px; font-weight:normal;">หลักฐานยังไม่พอ (p-value > α หรือ ค่าสถิติตกอยู่นอกเขตวิกฤต) ยังคงยึดถือความเชื่อเดิมไว้</span>`;
         }
 
         drawMainPlot(statType, tailType, df, testStat, critLeft, critRight);
@@ -673,7 +688,6 @@
         }, { responsive: true, displayModeBar: false });
     }
 
-    syncAlpha();
     runTest();
     drawExamplePlot();
 </script>
