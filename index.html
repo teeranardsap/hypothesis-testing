@@ -3,168 +3,500 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>คาบที่ 6-7: การทดสอบสมมุติฐาน (Hypothesis Testing)</title>
+    <title>การทดสอบสมมุติฐาน (Hypothesis Testing)</title>
     <!-- Libraries CDN -->
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.6/jstat.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- MathJax แปลงสูตรคณิตศาสตร์ให้อ่านง่าย ไม่เป็นภาษาเอเลี่ยน -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1a365d;
-            --accent: #2b6cb0;
-            --reject: #e53e3e;
-            --accept: #38a169;
-            --bg: #f7fafc;
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --reject: #dc2626;
+            --accept: #16a34a;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
         }
-        body { font-family: 'Sarabun', sans-serif; background-color: var(--bg); margin: 0; padding: 15px; color: #2d3748; }
-        .container { max-width: 1400px; margin: auto; }
-        .header { background: linear-gradient(135deg, #1a365d, #2b6cb0); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .grid-layout { display: flex; gap: 20px; }
-        .sidebar { flex: 1.1; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); height: fit-content; }
-        .main-content { flex: 2.9; }
-        .control-group { margin-bottom: 14px; }
-        label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #4a5568; }
-        select, input[type="number"], input[type="range"] { width: 100%; box-sizing: border-box; padding: 7px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 14px; }
-        .val-badge { float: right; font-weight: bold; color: var(--accent); }
-        .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
-        .metric-card { background: white; padding: 12px; border-radius: 10px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.04); border-top: 3px solid var(--accent); }
-        .metric-title { font-size: 12px; color: #718096; font-weight: 600; }
-        .metric-value { font-size: 20px; font-weight: 700; color: var(--primary); margin-top: 4px; }
-        .chart-box { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 15px; }
-        .decision-banner { padding: 16px; border-radius: 10px; color: white; font-weight: bold; font-size: 16px; text-align: center; margin-bottom: 15px; transition: 0.3s; }
-        .reject-bg { background-color: var(--reject); box-shadow: 0 4px 10px rgba(229, 62, 62, 0.3); }
-        .accept-bg { background-color: var(--accept); box-shadow: 0 4px 10px rgba(56, 161, 105, 0.3); }
-        .teaching-tip { background: #ebf8ff; border-left: 4px solid #3182ce; padding: 15px; border-radius: 8px; font-size: 13.5px; line-height: 1.6; }
-        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 16px;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ส่วนหัว ไม่มีคำว่าคาบ มีป้ายบอกเวอร์ชัน */
+        .header {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        /* การ์ดความรู้ 2 ฝั่ง ปูพื้นฐานสำหรับคนไม่มีความรู้ */
+        .intro-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .intro-box {
+            background: var(--card);
+            padding: 18px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            font-size: 13.5px;
+        }
+
+        .intro-box h3 {
+            margin: 0 0 8px 0;
+            font-size: 15.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .grid-layout {
+            display: flex;
+            gap: 20px;
+        }
+
+        .sidebar {
+            flex: 1.25;
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        .main-content {
+            flex: 2.75;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 13.5px;
+            margin-bottom: 5px;
+            color: #0f172a;
+        }
+
+        select, input[type="number"], input[type="range"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 13.5px;
+        }
+
+        /* ป้ายแจ้งเตือนการตัดสินใจสด */
+        .decision-banner {
+            padding: 16px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .reject-bg { background-color: var(--reject); }
+        .accept-bg { background-color: var(--accept); }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .metric-card {
+            background: var(--card);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-top: 4px solid var(--accent);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .metric-label {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .metric-val {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 4px;
+        }
+
+        .chart-box {
+            background: var(--card);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            margin-bottom: 18px;
+        }
+
+        /* การ์ดตัวอย่างโจทย์จริงพร้อมเฉลย */
+        .example-box {
+            background: #ffffff;
+            border: 2px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+        }
+
+        .example-grid {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .example-solution {
+            flex: 1.25;
+            background: #f0fdf4;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #16a34a;
+            font-size: 13.5px;
+            line-height: 1.7;
+        }
+
+        .example-chart {
+            flex: 0.95;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #dcfce7;
+            text-align: center;
+        }
+
+        /* Tooltip สัญลักษณ์คณิตศาสตร์ เอาเมาส์ชี้ขึ้นคำอธิบาย */
+        .math-tag {
+            display: inline-flex;
+            align-items: center;
+            cursor: help;
+            border-bottom: 1.5px dashed var(--accent);
+            color: #1e3a8a;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .math-tag::after {
+            content: " ⓘ";
+            font-size: 11px;
+            color: var(--accent);
+            margin-left: 2px;
+        }
+
+        .math-tag:hover .tooltip-card,
+        .math-tag:focus .tooltip-card {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip-card {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 400;
+            width: 260px;
+            white-space: normal;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+            z-index: 9999;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .tooltip-card::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #0f172a;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- ส่วนหัว ไม่มีคำว่าคาบ -->
     <div class="header">
-        <h2 style="margin: 0;">🎯 คาบที่ 6-7: การทดสอบสมมุติฐาน (Hypothesis Testing)</h2>
-        <p style="margin: 5px 0 0 0; opacity: 0.9;">สื่อการสอนจำลองค่าสถิติ Z/t-test, ค่าวิกฤต, p-value และความคลาดเคลื่อน Type I / Type II</p>
+        <h1>การทดสอบสมมุติฐาน (Hypothesis Testing)</h1>
+        <div class="version-badge">✨ เวอร์ชันอัปเกรดล่าสุด: แสดงสูตรชัดเจน + เฉลยตัวอย่างโจทย์</div>
+        <p style="margin: 8px 0 0 0; font-size: 14.5px; opacity: 0.95;">
+            เครื่องมือตรวจสอบความจริงเชิงสถิติ: ใช้ข้อมูลตัวอย่างเพื่อตัดสินว่าความเชื่อเดิมนั้น "ยังเชื่อได้อยู่" หรือ "ต้องปฏิเสธ"
+        </p>
+    </div>
+
+    <!-- ส่วนปูพื้นฐานสำหรับคนไม่มีพื้นฐาน -->
+    <div class="intro-grid">
+        <div class="intro-box" style="border-left: 5px solid #2563eb;">
+            <h3 style="color: #1e3a8a;">⚖️ 1. เราทำการทดสอบสมมุติฐาน "เพื่ออะไร"?</h3>
+            เปรียบเทียบง่ายที่สุดเหมือน <b>"การไต่สวนในศาล"</b>:
+            <ul style="margin: 6px 0 0 0; padding-left: 20px;">
+                <li><b>สมมุติฐานหลัก (\(H_0\)):</b> เปรียบเสมือน <i>"ผู้ต้องหาบริสุทธิ์ไว้ก่อน"</i> (สถานการณ์ปกติ ยังไม่มีอะไรเปลี่ยนแปลง)</li>
+                <li><b>สมมุติฐานทางเลือก (\(H_1\)):</b> ข้อกล่าวหาที่ต้องการพิสูจน์ว่า <i>"ผู้ต้องหาทำผิดจริง"</i> (เกิดการเปลี่ยนแปลงแล้ว)</li>
+                <li><b>หลักการตัดสิน:</b> เราจะยอมทิ้งความเชื่อเดิม (ปฏิเสธ \(H_0\)) ก็ต่อเมื่อ <b>"มีหลักฐานจากตัวอย่างแน่นหนาจนแทบเป็นไปไม่ได้ที่จะเป็นเรื่องบังเอิญ"</b></li>
+            </ul>
+        </div>
+
+        <div class="intro-box" style="border-left: 5px solid #0284c7;">
+            <h3 style="color: #0369a1;">🔍 2. Z-Test กับ t-Test ใช้ต่างกันอย่างไร? เมื่อไหร่ใช้อันไหน?</h3>
+            <ul style="margin: 6px 0 0 0; padding-left: 20px;">
+                <li><b>ใช้ Z-Test เมื่อ:</b> เรารู้จักประชากรดีมาก คือ <b>"ทราบค่าความแปรปรวนแท้จริง (\(\sigma\))"</b> หรือมีกลุ่มตัวอย่างขนาดใหญ่มาก (\(n \ge 30\))</li>
+                <li><b>ใช้ t-Test เมื่อ:</b> สถานการณ์จริงส่วนใหญ่ คือ <b>"ไม่ทราบ \(\sigma\)"</b> ต้องใช้ส่วนเบี่ยงเบนของตัวอย่าง (\(s\)) แทน และตัวอย่างมีขนาดเล็ก (\(n < 30\)) หางกราฟจะหนากว่าปกติเพื่อชดเชยความเสี่ยง (ใช้ค่า \(df = n - 1\))</li>
+            </ul>
+        </div>
     </div>
 
     <div class="grid-layout">
-        <!-- แผงตั้งค่าและป้อนค่าโจทย์ -->
+        <!-- Sidebar แผงควบคุมตัวเลข -->
         <div class="sidebar">
-            <h3 style="margin-top:0; color: var(--primary); font-size: 16px;">⚙️ กำหนดโจทย์การทดสอบ</h3>
+            <h3 style="margin-top:0; color: #1e3a8a; font-size: 16px;">⚙️ ป้อนข้อมูลเพื่อทดสอบ</h3>
 
-            <div class="control-group">
-                <label>1. เลือกสถิติทดสอบ (Test Statistic):</label>
-                <select id="statType" onchange="runTest()">
-                    <option value="z">Z-Test (ทราบค่าความแปรปรวน σ หรือ n ≥ 30)</option>
-                    <option value="t">t-Test (ไม่ทราบ σ, ใช้ s แทน, n < 30)</option>
+            <div class="form-group">
+                <label>1. เลือกสถิติทดสอบ:</label>
+                <select id="statType" onchange="runTest();">
+                    <option value="z">Z-Test (ทราบค่า σ หรือ n ≥ 30)</option>
+                    <option value="t" selected>t-Test (ไม่ทราบ σ, ใช้ s แทน, n < 30)</option>
                 </select>
             </div>
 
-            <div class="control-group">
-                <label>2. ทิศทางการทดสอบสมมุติฐาน (Tail Type):</label>
+            <div class="form-group">
+                <label>
+                    2. ทิศทางการทดสอบ
+                    (<span class="math-tag" tabindex="0">Tail Type
+                        <span class="tooltip-card"><b>ทิศทางการทดสอบ:</b><br>• สองทาง: สนใจว่า "แตกต่างหรือไม่" (≠)<br>• ทางขวา: สนใจว่า "มากกว่าเดิมหรือไม่" (>)<br>• ทางซ้าย: สนใจว่า "น้อยกว่าเกณฑ์หรือไม่" (<)</span>
+                    </span>):
+                </label>
                 <select id="tailType" onchange="runTest()">
                     <option value="two">สองทาง (Two-tailed: H₁: μ ≠ μ₀)</option>
-                    <option value="right">ทางขวา (Right-tailed: H₁: μ > μ₀)</option>
+                    <option value="right" selected>ทางขวา (Right-tailed: H₁: μ > μ₀)</option>
                     <option value="left">ทางซ้าย (Left-tailed: H₁: μ < μ₀)</option>
                 </select>
             </div>
 
-            <div class="control-group">
-                <label>ระดับนัยสำคัญ (α): <span id="alphaVal" class="val-badge">0.05</span></label>
-                <input type="range" id="alphaInput" min="0.005" max="0.10" step="0.005" value="0.05" oninput="updateUI(); runTest();">
+            <div class="form-group">
+                <label>
+                    3. ระดับนัยสำคัญ 
+                    (<span class="math-tag" tabindex="0">α
+                        <span class="tooltip-card"><b>แอลฟา (α):</b> ระดับความผิดพลาดสูงสุดที่เรายอมรับได้ที่จะเผลอปฏิเสธ H₀ ทั้งที่ H₀ ถูกต้อง ปกตินิยมใช้ 0.05 (5%)</span>
+                    </span>): <span id="alphaDisp" style="float:right; font-weight:bold; color:#0284c7;">0.05</span>
+                </label>
+                <input type="range" id="alphaRange" min="0.01" max="0.10" step="0.01" value="0.05" oninput="syncAlpha(); runTest();">
             </div>
 
-            <hr style="border: 0; border-top: 1px dashed #e2e8f0; margin: 15px 0;">
+            <hr style="border:0; border-top: 1px dashed var(--border); margin: 16px 0;">
 
-            <div class="control-group">
-                <label>ค่าเฉลี่ยสมมุติฐานหลัก (μ₀):</label>
+            <div class="form-group">
+                <label>
+                    ค่าเฉลี่ยตามความเชื่อเดิม 
+                    (<span class="math-tag" tabindex="0">μ₀
+                        <span class="tooltip-card"><b>μ₀ (Null Value):</b> ตัวเลขค่าเฉลี่ยตามมาตรฐานเดิมที่ระบุไว้ใน H₀</span>
+                    </span>):
+                </label>
                 <input type="number" id="mu0Input" value="50" step="1" oninput="runTest()">
             </div>
 
-            <div class="control-group">
-                <label>ขนาดตัวอย่าง (n): <span id="nVal" class="val-badge">25</span></label>
-                <input type="range" id="nInput" min="3" max="150" value="25" oninput="updateUI(); runTest();">
+            <div class="form-group">
+                <label>
+                    ขนาดตัวอย่างที่สุ่มตรวจ 
+                    (<span class="math-tag" tabindex="0">n
+                        <span class="tooltip-card"><b>n (Sample Size):</b> จำนวนข้อมูลที่เราสุ่มมาตรวจสอบจริง</span>
+                    </span>):
+                </label>
+                <input type="number" id="nInput" value="16" min="2" max="500" step="1" oninput="runTest()">
             </div>
 
-            <div class="control-group">
-                <label>ค่าเฉลี่ยตัวอย่างที่เก็บได้ (X̄):</label>
+            <div class="form-group">
+                <label>
+                    ค่าเฉลี่ยที่วัดได้จริงจากตัวอย่าง 
+                    (<span class="math-tag" tabindex="0">X̄
+                        <span class="tooltip-card"><b>X̄ (Sample Mean):</b> ค่าเฉลี่ยที่คำนวณได้จากกลุ่มตัวอย่าง n ตัว</span>
+                    </span>):
+                </label>
                 <input type="number" id="xbarInput" value="53" step="0.5" oninput="runTest()">
             </div>
 
-            <div class="control-group">
-                <label>ส่วนเบี่ยงเบนมาตรฐาน (σ หรือ s):</label>
-                <input type="number" id="sdInput" value="8" min="0.1" step="0.5" oninput="runTest()">
-            </div>
-
-            <hr style="border: 0; border-top: 1px dashed #e2e8f0; margin: 15px 0;">
-
-            <div class="control-group">
-                <label>🎯 ลูกเล่นพิเศษ: กราฟ Hₐ จริง (หา β & Power):</label>
-                <input type="checkbox" id="showAlt" onchange="runTest()" style="width: auto;"> แสดงเส้นประชากรจริง (μₐ)
-                <div id="altMuBox" style="display:none; margin-top:8px;">
-                    <label style="font-size:11px;">ค่าเฉลี่ย Hₐ ที่แท้จริง (True μ):</label>
-                    <input type="number" id="muAInput" value="54" step="0.5" oninput="runTest()">
-                </div>
+            <div class="form-group">
+                <label>
+                    ส่วนเบี่ยงเบนมาตรฐาน 
+                    (<span class="math-tag" tabindex="0">σ หรือ s
+                        <span class="tooltip-card"><b>σ หรือ s:</b> ส่วนเบี่ยงเบนมาตรฐานของการกระจายข้อมูล</span>
+                    </span>):
+                </label>
+                <input type="number" id="sdInput" value="6" min="0.1" step="0.5" oninput="runTest()">
             </div>
         </div>
 
-        <!-- หน้าแสดงผลกราฟและการตัดสินใจ -->
+        <!-- Main Content -->
         <div class="main-content">
             <!-- ป้ายสรุปผลการตัดสินใจ -->
             <div id="decisionCard" class="decision-banner reject-bg">
-                กำลังคำนวณ...
+                กำลังประมวลผล...
             </div>
 
             <div class="metrics-grid">
                 <div class="metric-card">
-                    <div class="metric-title">ค่าสถิติทดสอบคำนวณ (Z_cal หรือ t_cal)</div>
-                    <div class="metric-value" id="calStat">0.00</div>
+                    <div class="metric-label">
+                        <span class="math-tag" tabindex="0">สถิติทดสอบคำนวณ
+                            <span class="tooltip-card"><b>ค่าสถิติทดสอบ:</b> คะแนนที่แปลงจากระยะห่างระหว่าง X̄ กับ μ₀ ด้วยสูตร: (X̄ - μ₀) / (s/√n)</span>
+                        </span>
+                    </div>
+                    <div class="metric-val" id="calStat">0.00</div>
                 </div>
+
                 <div class="metric-card">
-                    <div class="metric-title">ค่าวิกฤต (Critical Value)</div>
-                    <div class="metric-value" id="critVal">0.00</div>
+                    <div class="metric-label">
+                        <span class="math-tag" tabindex="0">ค่าวิกฤต (Critical Value)
+                            <span class="tooltip-card"><b>ค่าวิกฤต:</b> เส้นแบ่งเขตแดนสีแดง ถ้าสถิติคำนวณเลยเส้นนี้เข้าไป แปลว่าเกิดการปฏิเสธ H₀</span>
+                        </span>
+                    </div>
+                    <div class="metric-val" id="critVal">0.00</div>
                 </div>
+
                 <div class="metric-card">
-                    <div class="metric-title">p-value</div>
-                    <div class="metric-value" id="pValue">0.000</div>
+                    <div class="metric-label">
+                        <span class="math-tag" tabindex="0">p-value
+                            <span class="tooltip-card"><b>p-value:</b> โอกาสที่จะเจอข้อมูลแบบนี้โดยบังเอิญ ถ้า p-value ≤ α แสดงว่าหลักฐานแน่น ให้ปฏิเสธ H₀</span>
+                        </span>
+                    </div>
+                    <div class="metric-val" id="pValue">0.000</div>
                 </div>
+
                 <div class="metric-card">
-                    <div class="metric-title">องศาอิสระ (df)</div>
-                    <div class="metric-value" id="dfVal">-</div>
+                    <div class="metric-label">
+                        <span class="math-tag" tabindex="0">องศาอิสระ (df)
+                            <span class="tooltip-card"><b>df = n - 1:</b> ใช้เฉพาะ t-test เพื่อบอกความกว้างของหางกราฟ</span>
+                        </span>
+                    </div>
+                    <div class="metric-val" id="dfVal">-</div>
                 </div>
             </div>
 
-            <!-- กราฟหลัก -->
             <div class="chart-box">
-                <div id="testPlot" style="height: 380px;"></div>
+                <h3 style="margin: 0 0 4px 0; color: #1e3a8a; font-size: 15px;">
+                    แผนภาพแสดงเขตวิกฤตและการตัดสินใจ (Critical Region & Decision Graph)
+                </h3>
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 8px;">
+                    ถ้าเส้นสีส้ม (ค่าสถิติคำนวณจริง) ตกเข้าไปใน <b>พื้นที่สีแดง (เขตวิกฤต)</b> แปลว่า <b>ปฏิเสธ \(H_0\)</b>
+                </div>
+                <div id="testPlot" style="height: 340px;"></div>
             </div>
 
-            <!-- สรุปเกณฑ์การตัดสินใจแบบละเอียดสำหรับอาจารย์ -->
-            <div class="teaching-tip">
-                <h4 style="margin: 0 0 8px 0; color: #2b6cb0;">📌 แนวทางการอธิบายและตั้งคำถามในชั้นเรียน:</h4>
-                <div id="teachingNotes"></div>
+            <!-- กล่องตัวอย่างโจทย์จริงพร้อมแสดงวิธีคิดทีละขั้น -->
+            <div class="example-box">
+                <h3 style="margin: 0 0 8px 0; color: #166534; font-size: 17px;">
+                    📶 ตัวอย่างโจทย์จริง: การทดสอบความเร็วเน็ตหอพักนักศึกษา (พร้อมวิธีคิด)
+                </h3>
+                <p style="margin: 0; font-size: 13.5px;">
+                    <b>สถานการณ์:</b> หอพักโฆษณาว่าความเร็วเน็ตเฉลี่ยอยู่ที่ \(\mu = 50\) Mbps แต่นักศึกษาสงสัยว่าเร็วจริงตามอ้างหรือไม่ จึงสุ่มทดสอบความเร็ว \(n = 16\) ครั้ง พบความเร็วเฉลี่ย \(\bar{X} = 53\) Mbps และมีส่วนเบี่ยงเบนมาตรฐานตัวอย่าง \(s = 6\) Mbps ที่ระดับนัยสำคัญ \(\alpha = 0.05\) มีหลักฐานเพียงพอที่จะสรุปว่าเน็ตหอพักเร็วกว่า 50 Mbps หรือไม่?
+                </p>
+
+                <div class="example-grid">
+                    <div class="example-solution">
+                        <b>📝 เฉลยขั้นตอนวิธีคิดอย่างละเอียด:</b><br>
+                        <b>ขั้นที่ 1: ตั้งสมมุติฐาน</b><br>
+                        • \(H_0: \mu = 50\) (เน็ตมีความเร็วปกติ 50 Mbps)<br>
+                        • \(H_1: \mu > 50\) (เน็ตเร็วกว่า 50 Mbps จริง ทดสอบทางขวา)<br><br>
+
+                        <b>ขั้นที่ 2: เลือกสถิติและคำนวณค่า</b><br>
+                        เนื่องจากไม่ทราบ \(\sigma\) ของทั้งหอพัก และ \(n = 16 < 30\) จึงใช้ \(t\)-test (\(df = 16 - 1 = 15\))<br>
+                        \[ t_{\text{cal}} = \frac{\bar{X} - \mu_0}{s / \sqrt{n}} = \frac{53 - 50}{6 / \sqrt{16}} = \frac{3}{1.5} = +2.00 \]
+
+                        <b>ขั้นที่ 3: เปิดตารางหาค่าวิกฤตและตัดสินใจ</b><br>
+                        เปิดตาราง \(t\) ทางขวาที่ \(\alpha = 0.05, df = 15\) ได้ค่าวิกฤต \(t_{\text{crit}} = +1.753\)<br>
+                        เนื่องจาก \(t_{\text{cal}} = 2.00 > 1.753\) (สถิติคำนวณตกในเขตสีแดง)<br><br>
+                        <b>💡 สรุปผล:</b> <b>ปฏิเสธ \(H_0\)</b> ยอมรับว่าเน็ตหอพักมีความเร็วเฉลี่ยมากกว่า 50 Mbps จริงอย่างมีนัยสำคัญทางสถิติที่ 0.05
+                    </div>
+
+                    <div class="example-chart">
+                        <div style="font-size: 12px; font-weight: bold; color: #166534; margin-bottom: 5px;">
+                            กราฟประกอบตัวอย่างโจทย์
+                        </div>
+                        <div id="examplePlot" style="height: 230px;"></div>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 </div>
 
 <script>
-    function updateUI() {
-        document.getElementById('alphaVal').innerText = parseFloat(document.getElementById('alphaInput').value).toFixed(3);
-        document.getElementById('nVal').innerText = document.getElementById('nInput').value;
-        const showAlt = document.getElementById('showAlt').checked;
-        document.getElementById('altMuBox').style.display = showAlt ? 'block' : 'none';
+    function syncAlpha() {
+        document.getElementById('alphaDisp').innerText = parseFloat(document.getElementById('alphaRange').value).toFixed(2);
     }
 
     function runTest() {
         const statType = document.getElementById('statType').value;
         const tailType = document.getElementById('tailType').value;
-        const alpha = parseFloat(document.getElementById('alphaInput').value);
+        const alpha = parseFloat(document.getElementById('alphaRange').value);
         const mu0 = parseFloat(document.getElementById('mu0Input').value);
-        const n = parseInt(document.getElementById('nInput').value);
+        const n = parseInt(document.getElementById('nInput').value) || 16;
         const xbar = parseFloat(document.getElementById('xbarInput').value);
-        const sd = parseFloat(document.getElementById('sdInput').value);
-        const showAlt = document.getElementById('showAlt').checked;
-        const muA = parseFloat(document.getElementById('muAInput').value);
+        const sd = parseFloat(document.getElementById('sdInput').value) || 1;
 
         const se = sd / Math.sqrt(n);
         const testStat = (xbar - mu0) / se;
@@ -173,7 +505,6 @@
         document.getElementById('dfVal').innerText = (statType === 't') ? df : 'N/A';
         document.getElementById('calStat').innerText = testStat.toFixed(3);
 
-        // คำนวณ Critical Value & p-value
         let critLeft = null, critRight = null, pVal = 0, isReject = false;
 
         if (statType === 'z') {
@@ -191,7 +522,7 @@
                 pVal = jStat.normal.cdf(testStat, 0, 1);
                 isReject = (testStat < critLeft);
             }
-        } else { // t-test
+        } else {
             if (tailType === 'two') {
                 critRight = jStat.studentt.inv(1 - alpha / 2, df);
                 critLeft = -critRight;
@@ -208,7 +539,6 @@
             }
         }
 
-        // แสดงผล Critical Value บนการ์ด
         if (tailType === 'two') {
             document.getElementById('critVal').innerText = `±${critRight.toFixed(3)}`;
         } else if (tailType === 'right') {
@@ -216,60 +546,41 @@
         } else {
             document.getElementById('critVal').innerText = `${critLeft.toFixed(3)}`;
         }
+
         document.getElementById('pValue').innerText = pVal < 0.001 ? "< 0.001" : pVal.toFixed(4);
 
-        // ป้ายตัดสิน
         const card = document.getElementById('decisionCard');
         if (isReject) {
             card.className = "decision-banner reject-bg";
-            card.innerHTML = `🚨 ปฏิเสธสมมุติฐานหลัก (Reject H₀) ที่ระดับนัยสำคัญ α = ${alpha}<br><span style="font-size:13px; font-weight:normal;">มีหลักฐานทางสถิติเพียงพอที่จะสนับสนุน H₁ (p-value ≤ α หรือ ค่าสถิติตกในเขตวิกฤต)</span>`;
+            card.innerHTML = `🚨 ตัดสินใจ: ปฏิเสธ H₀ (Reject H₀) ที่ระดับนัยสำคัญ α = ${alpha.toFixed(2)}<br><span style="font-size:13px; font-weight:normal;">หลักฐานหนักแน่นพอ (p-value ≤ α หรือ ค่าสถิติคำนวณทะลุเข้าเขตสีแดง) มีนัยสำคัญทางสถิติ!</span>`;
         } else {
             card.className = "decision-banner accept-bg";
-            card.innerHTML = `✅ ไม่ปฏิเสธ / ยอมรับ H₀ (Fail to Reject H₀) ที่ระดับนัยสำคัญ α = ${alpha}<br><span style="font-size:13px; font-weight:normal;">หลักฐานทางสถิติไม่เพียงพอที่จะปฏิเสธ H₀ (p-value > α หรือ ค่าสถิติตกนอกเขตวิกฤต)</span>`;
+            card.innerHTML = `✅ ตัดสินใจ: ไม่ปฏิเสธ / ยอมรับ H₀ (Fail to Reject H₀) ที่ระดับนัยสำคัญ α = ${alpha.toFixed(2)}<br><span style="font-size:13px; font-weight:normal;">หลักฐานยังไม่พอ (p-value > α หรือ ค่าสถิติตกอยู่นอกเขตวิกฤต) ยังคงยึดถือความเชื่อเดิมไว้</span>`;
         }
 
-        // วาดกราฟ Plotly
-        drawGraph(statType, tailType, df, testStat, critLeft, critRight, showAlt, mu0, muA, se);
-
-        // แนวทางการสอน
-        let compText = isReject ? `เนื่องจาก p-value (${pVal.toFixed(4)}) ≤ α (${alpha})` : `เนื่องจาก p-value (${pVal.toFixed(4)}) > α (${alpha})`;
-        document.getElementById('teachingNotes').innerHTML = `
-            • <b>สรุปผล:</b> ${compText} จึงตัดสินใจ <b>${isReject ? 'ปฏิเสธ H₀' : 'ยอมรับ H₀'}</b><br>
-            • <b>เปรียบเทียบค่าวิกฤต:</b> ค่าทดสอบคำนวณได้ <code>${testStat.toFixed(3)}</code> อยู่<b>${isReject ? 'ในเขตปฏิเสธสีแดง (Critical Region)' : 'ในเขตยอมรับ H₀ สีเทา'}</b><br>
-            • <b>คำถามถามนักศึกษา:</b> ลองเลื่อนขนาดตัวอย่าง (n) ให้มากขึ้น สังเกตว่าความคลาดเคลื่อนมาตรฐาน (Standard Error) เล็กลง ส่งผลให้ค่าสถิติทดสอบวิ่งหนีออกจากศูนย์ไปทางเขตวิกฤตเร็วขึ้นหรือไม่?
-        `;
+        drawMainPlot(statType, tailType, df, testStat, critLeft, critRight);
     }
 
-    function drawGraph(statType, tailType, df, testStat, critLeft, critRight, showAlt, mu0, muA, se) {
+    function drawMainPlot(statType, tailType, df, testStat, critLeft, critRight) {
         const x = [];
-        const yH0 = [];
-        const yHa = [];
-        const range = 4.5;
+        const y = [];
+        const range = 4.2;
         const step = 0.04;
 
         for (let v = -range; v <= range; v += step) {
             x.push(v);
-            let pdfVal = (statType === 'z') ? jStat.normal.pdf(v, 0, 1) : jStat.studentt.pdf(v, df);
-            yH0.push(pdfVal);
-
-            if (showAlt) {
-                let shift = (muA - mu0) / se;
-                let pdfValAlt = (statType === 'z') ? jStat.normal.pdf(v - shift, 0, 1) : jStat.studentt.pdf(v - shift, df);
-                yHa.push(pdfValAlt);
-            }
+            y.push((statType === 'z') ? jStat.normal.pdf(v, 0, 1) : jStat.studentt.pdf(v, df));
         }
 
-        const traces = [];
+        const traces = [
+            {
+                x: x, y: y,
+                type: 'scatter', mode: 'lines',
+                name: (statType === 'z' ? 'โค้งปกติมาตรฐาน (Z)' : `โค้ง t (df=${df})`),
+                line: { color: '#1e3a8a', width: 2.5 }
+            }
+        ];
 
-        // 1. เส้นโค้ง H0
-        traces.push({
-            x: x, y: yH0,
-            type: 'scatter', mode: 'lines',
-            name: 'การแจกแจงใต้ H₀',
-            line: { color: '#2b6cb0', width: 2.5 }
-        });
-
-        // 2. ระบายสีเขตวิกฤต (Rejection Region)
         if (critRight !== null) {
             const rx = x.filter(v => v >= critRight);
             const ry = rx.map(v => (statType === 'z') ? jStat.normal.pdf(v, 0, 1) : jStat.studentt.pdf(v, df));
@@ -277,11 +588,12 @@
                 x: [critRight, ...rx, rx[rx.length - 1]],
                 y: [0, ...ry, 0],
                 fill: 'toself',
-                fillcolor: 'rgba(229, 62, 62, 0.45)',
+                fillcolor: 'rgba(220, 38, 38, 0.45)',
                 line: { color: 'transparent' },
                 name: 'เขตวิกฤต (Reject H₀)'
             });
         }
+
         if (critLeft !== null) {
             const lx = x.filter(v => v <= critLeft);
             const ly = lx.map(v => (statType === 'z') ? jStat.normal.pdf(v, 0, 1) : jStat.studentt.pdf(v, df));
@@ -289,46 +601,81 @@
                 x: [lx[0], ...lx, critLeft],
                 y: [0, ...ly, 0],
                 fill: 'toself',
-                fillcolor: 'rgba(229, 62, 62, 0.45)',
+                fillcolor: 'rgba(220, 38, 38, 0.45)',
                 line: { color: 'transparent' },
                 showlegend: false
             });
         }
 
-        // 3. กราฟ H_a หากเปิดโหมด Power / Type II error
-        if (showAlt) {
-            traces.push({
-                x: x, y: yHa,
-                type: 'scatter', mode: 'lines',
-                name: 'การแจกแจงจริง (True Hₐ)',
-                line: { color: '#38a169', width: 2, dash: 'dot' }
-            });
-        }
-
-        // 4. เส้นปักจุด Test Statistic คำนวณจริง
         traces.push({
             x: [testStat, testStat],
-            y: [0, Math.max(...yH0) * 1.05],
+            y: [0, Math.max(...y) * 1.05],
             type: 'scatter', mode: 'lines+text',
-            name: 'ค่าสถิติทดสอบคำนวณ',
-            text: ['', ` สถิติคำนวณ (${testStat.toFixed(2)})`],
+            name: 'สถิติคำนวณจริง',
+            text: ['', ` สถิติ (${testStat.toFixed(2)})`],
             textposition: 'top right',
-            line: { color: '#d69e2e', width: 3 }
+            line: { color: '#ea580c', width: 3 }
         });
 
         const layout = {
-            margin: { t: 30, r: 20, l: 40, b: 40 },
-            xaxis: { title: (statType === 'z' ? 'ค่าคะแนนมาตรฐาน Z' : 'ค่าสถิติ t'), zeroline: true },
-            yaxis: { title: 'ความหนาแน่น (Density)' },
-            legend: { orientation: 'h', y: 1.15, x: 0 },
-            shapes: []
+            margin: { t: 20, r: 20, l: 35, b: 35 },
+            xaxis: { title: (statType === 'z' ? 'ค่า Z' : 'ค่า t') },
+            yaxis: { showticklabels: false },
+            legend: { x: 0.65, y: 1 }
         };
 
-        Plotly.newPlot('testPlot', traces, layout, { responsive: true });
+        Plotly.newPlot('testPlot', traces, layout, { responsive: true, displayModeBar: false });
     }
 
-    updateUI();
+    function drawExamplePlot() {
+        const df = 15;
+        let x = [];
+        let y = [];
+        for (let v = -3.5; v <= 3.5; v += 0.05) {
+            x.push(v);
+            y.push(jStat.studentt.pdf(v, df));
+        }
+
+        const crit = 1.753;
+        const stat = 2.00;
+
+        let xFill = x.filter(v => v >= crit);
+        let yFill = xFill.map(v => jStat.studentt.pdf(v, df));
+
+        Plotly.newPlot('examplePlot', [
+            {
+                x: x, y: y,
+                type: 'scatter', mode: 'lines',
+                line: { color: '#16a34a', width: 2 },
+                name: 'โค้ง t (df=15)'
+            },
+            {
+                x: [crit, ...xFill, xFill[xFill.length - 1]],
+                y: [0, ...yFill, 0],
+                fill: 'toself',
+                fillcolor: 'rgba(220, 38, 38, 0.45)',
+                line: { color: 'transparent' },
+                name: 'เขตวิกฤต (t > 1.753)'
+            },
+            {
+                x: [stat, stat],
+                y: [0, jStat.studentt.pdf(stat, df) * 1.3],
+                type: 'scatter', mode: 'lines+text',
+                line: { color: '#ea580c', width: 2.5 },
+                text: ['', ' t_cal = 2.00'],
+                textposition: 'top center'
+            }
+        ], {
+            margin: { t: 15, r: 10, l: 30, b: 30 },
+            xaxis: { title: 'คะแนน t' },
+            yaxis: { showticklabels: false },
+            showlegend: false
+        }, { responsive: true, displayModeBar: false });
+    }
+
+    syncAlpha();
     runTest();
+    drawExamplePlot();
 </script>
 
 </body>
