@@ -7,6 +7,7 @@
     <!-- Libraries CDN -->
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.6/jstat.min.js"></script>
+    <!-- MathJax แปลงสูตรคณิตศาสตร์ให้อ่านง่าย คมชัด ไม่เป็นภาษาเอเลี่ยน -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,47 +21,282 @@
             --card: #ffffff;
             --border: #e2e8f0;
         }
-        body { font-family: 'Sarabun', sans-serif; background-color: var(--bg); margin: 0; padding: 16px; color: #334155; line-height: 1.6; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        .header { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15); }
-        .header h1 { margin: 0; font-size: 26px; font-weight: 700; }
-        
-        /* แผงคัมภีร์สรุป 4 เรื่องสำคัญ */
-        .cheatsheet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 22px; }
-        .cheat-card { background: var(--card); border-radius: 10px; padding: 16px 18px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.03); font-size: 13.5px; }
-        .cheat-card h3 { margin: 0 0 8px 0; font-size: 15px; color: #1e3a8a; display: flex; align-items: center; gap: 6px; }
-        .cheat-card table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 12.5px; }
-        .cheat-card th, .cheat-card td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
-        .cheat-card th { background: #f1f5f9; }
 
-        .grid-layout { display: flex; gap: 20px; }
-        .sidebar { flex: 1.25; background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.05); height: fit-content; }
-        .main-content { flex: 2.75; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 5px; color: #0f172a; }
-        select, input[type="number"] { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 14px; }
-        .dual-control { display: flex; gap: 10px; align-items: center; }
-        .dual-control input[type="range"] { flex: 2; }
-        .dual-control input[type="number"] { flex: 1; padding: 6px; }
-        .decision-banner { padding: 16px 20px; border-radius: 10px; color: white; font-weight: bold; font-size: 16px; text-align: center; margin-bottom: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: all 0.3s; }
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 16px;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        /* แผงคัมภีร์สรุป 4 เรื่องสำคัญ */
+        .cheatsheet-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .cheat-card {
+            background: var(--card);
+            border-radius: 10px;
+            padding: 16px 18px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            font-size: 13.5px;
+        }
+
+        .cheat-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 15px;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cheat-card table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+            font-size: 12.5px;
+        }
+
+        .cheat-card th, .cheat-card td {
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            text-align: left;
+        }
+
+        .cheat-card th {
+            background: #f1f5f9;
+        }
+
+        .grid-layout {
+            display: flex;
+            gap: 20px;
+        }
+
+        .sidebar {
+            flex: 1.25;
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        .main-content {
+            flex: 2.75;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 13.5px;
+            margin-bottom: 5px;
+            color: #0f172a;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .dual-control {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .dual-control input[type="range"] {
+            flex: 2;
+        }
+
+        .dual-control input[type="number"] {
+            flex: 1;
+            padding: 6px;
+        }
+
+        .decision-banner {
+            padding: 16px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
         .reject-bg { background-color: var(--reject); }
         .accept-bg { background-color: var(--accept); }
-        .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
-        .metric-card { background: var(--card); padding: 12px; border-radius: 10px; text-align: center; border: 1px solid var(--border); border-top: 4px solid var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
-        .metric-label { font-size: 12.5px; font-weight: 600; color: #64748b; }
-        .metric-val { font-size: 22px; font-weight: 700; color: #0f172a; margin-top: 4px; }
-        .chart-box { background: var(--card); padding: 16px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.04); margin-bottom: 18px; }
-        
-        .example-box { background: #ffffff; border: 2px solid #bbf7d0; border-radius: 12px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
-        .example-grid { display: flex; gap: 20px; align-items: center; margin-top: 15px; }
-        .example-solution { flex: 1.25; background: #f0fdf4; padding: 16px; border-radius: 8px; border-left: 4px solid #16a34a; font-size: 13.5px; line-height: 1.7; }
-        .example-chart { flex: 0.95; background: #ffffff; padding: 10px; border-radius: 8px; border: 1px solid #dcfce7; text-align: center; }
 
-        .math-tag { display: inline-flex; align-items: center; cursor: help; border-bottom: 1.5px dashed var(--accent); color: #1e3a8a; font-weight: 700; position: relative; }
-        .math-tag::after { content: " ⓘ"; font-size: 11px; color: var(--accent); margin-left: 2px; }
-        .math-tag:hover .tooltip-card, .math-tag:focus .tooltip-card { visibility: visible; opacity: 1; }
-        .tooltip-card { visibility: hidden; opacity: 0; position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%); background: #0f172a; color: #ffffff; padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 400; width: 260px; white-space: normal; box-shadow: 0 6px 16px rgba(0,0,0,0.25); z-index: 9999; transition: opacity 0.2s; pointer-events: none; line-height: 1.5; text-align: left; }
-        .tooltip-card::after { content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: #0f172a; }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .metric-card {
+            background: var(--card);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-top: 4px solid var(--accent);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .metric-label {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .metric-val {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 4px;
+        }
+
+        .chart-box {
+            background: var(--card);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            margin-bottom: 18px;
+        }
+
+        /* การ์ดตัวอย่างโจทย์จริงเปลี่ยนอัตโนมัติ */
+        .example-box {
+            background: #ffffff;
+            border: 2px solid #86efac;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+        }
+
+        .example-grid {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .example-solution {
+            flex: 1.25;
+            background: #f0fdf4;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #16a34a;
+            font-size: 13.5px;
+            line-height: 1.7;
+        }
+
+        .example-chart {
+            flex: 0.95;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #dcfce7;
+            text-align: center;
+        }
+
+        .math-tag {
+            display: inline-flex;
+            align-items: center;
+            cursor: help;
+            border-bottom: 1.5px dashed var(--accent);
+            color: #1e3a8a;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .math-tag::after {
+            content: " ⓘ";
+            font-size: 11px;
+            color: var(--accent);
+            margin-left: 2px;
+        }
+
+        .math-tag:hover .tooltip-card,
+        .math-tag:focus .tooltip-card {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip-card {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 400;
+            width: 260px;
+            white-space: normal;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+            z-index: 9999;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .tooltip-card::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #0f172a;
+        }
     </style>
 </head>
 <body>
@@ -68,12 +304,11 @@
 <div class="container">
     <div class="header">
         <h1>การทดสอบสมมุติฐาน (Hypothesis Testing)</h1>
-        <p>คู่มือสถิติเชิงโต้ตอบ: สูตรคำนวณ วิธีเปิดตารางค่าวิกฤต ความหมายของ p-value และเกณฑ์การตัดสินใจ</p>
+        <p>คู่มือสถิติเชิงโต้ตอบ: สูตรคำนวณ วิธีเปิดตารางค่าวิกฤต ความหมายของ p-value และโจทย์ตัวอย่างเปลี่ยนตามกราฟ</p>
     </div>
 
-    <!-- ส่วนคัมภีร์สรุป 4 เรื่องสำคัญที่เด็กมักงง -->
+    <!-- ส่วนคัมภีร์สรุป 4 เรื่องสำคัญ -->
     <div class="cheatsheet-grid">
-        <!-- 1. สูตร Z vs t -->
         <div class="cheat-card" style="border-left: 5px solid #2563eb;">
             <h3>📐 1. สูตร Z-test vs t-test</h3>
             • <b>Z-test:</b> \( Z_{\text{cal}} = \frac{\bar{X} - \mu_0}{\sigma / \sqrt{n}} \) <br>
@@ -82,7 +317,6 @@
             <small style="color:#64748b;">(ใช้ในชีวิตจริงเมื่อไม่ทราบ \(\sigma\) และตัวอย่างขนาดเล็ก \(n < 30\))</small>
         </div>
 
-        <!-- 2. p-value คืออะไรในภาษาคน -->
         <div class="cheat-card" style="border-left: 5px solid #0284c7;">
             <h3>💡 2. ค่า p-value คืออะไร? (ฉบับเข้าใจใน 1 นาที)</h3>
             <b>p-value คือ "ระดับความบังเอิญ":</b> ถ้าสมมุติฐานเดิม (\(H_0\)) เป็นจริง โอกาสที่เราจะสุ่มเจอข้อมูลหน้าตาประหลาดขนาดนี้มีกี่เปอร์เซ็นต์?
@@ -92,7 +326,6 @@
             </ul>
         </div>
 
-        <!-- 3. วิธีดูตารางค่าวิกฤต -->
         <div class="cheat-card" style="border-left: 5px solid #16a34a;">
             <h3>📖 3. วิธีเปิดตารางค่าวิกฤต (Critical Value)</h3>
             • <b>ตาราง Z:</b> ดูที่ระดับ \(\alpha\) (ไม่ต้องสนขนาดตัวอย่าง)
@@ -104,7 +337,6 @@
             • <b>ตาราง t:</b> ต้องดู 2 ค่าพร้อมกันคือ <b>แถบองศาอิสระ (\(df = n - 1\))</b> ตัดกับช่อง <b>ระดับ \(\alpha\)</b>
         </div>
 
-        <!-- 4. เกณฑ์การเปรียบเทียบ Reject H0 -->
         <div class="cheat-card" style="border-left: 5px solid #dc2626;">
             <h3>🚨 4. เช็คอย่างไรว่า "Reject H₀" หรือไม่?</h3>
             สามารถเลือกใช้เกณฑ์ใดเกณฑ์หนึ่งได้เสมอ (ผลจะตรงกัน 100%):
@@ -123,7 +355,7 @@
 
             <div class="form-group">
                 <label>1. เลือกสถิติทดสอบ:</label>
-                <select id="statType" onchange="runTest();">
+                <select id="statType" onchange="runTest(); updateExampleByTest();">
                     <option value="z">Z-Test (ทราบค่า σ หรือ n ≥ 30)</option>
                     <option value="t" selected>t-Test (ไม่ทราบ σ, ใช้ s แทน, n < 30)</option>
                 </select>
@@ -136,7 +368,7 @@
                         <span class="tooltip-card"><b>ทิศทางการทดสอบ:</b><br>• สองทาง: สนใจว่า "แตกต่างหรือไม่" (≠)<br>• ทางขวา: สนใจว่า "มากกว่าเดิมหรือไม่" (>)<br>• ทางซ้าย: สนใจว่า "น้อยกว่าเกณฑ์หรือไม่" (<)</span>
                     </span>):
                 </label>
-                <select id="tailType" onchange="runTest()">
+                <select id="tailType" onchange="runTest(); updateExampleByTest();">
                     <option value="two">สองทาง (Two-tailed: H₁: μ ≠ μ₀)</option>
                     <option value="right" selected>ทางขวา (Right-tailed: H₁: μ > μ₀)</option>
                     <option value="left">ทางซ้าย (Left-tailed: H₁: μ < μ₀)</option>
@@ -251,37 +483,16 @@
                 <div id="testPlot" style="height: 340px;"></div>
             </div>
 
-            <!-- กล่องตัวอย่างโจทย์จริง -->
+            <!-- กล่องตัวอย่างโจทย์จริงที่จะเปลี่ยนอัตโนมัติตามประเภทการทดสอบที่เลือก -->
             <div class="example-box">
-                <h3 style="margin: 0 0 8px 0; color: #166534; font-size: 17px;">
-                    📶 ตัวอย่างโจทย์จริง: การทดสอบความเร็วเน็ตหอพักนักศึกษา (พร้อมวิธีคิด)
-                </h3>
-                <p style="margin: 0; font-size: 13.5px;">
-                    <b>สถานการณ์:</b> หอพักโฆษณาว่าความเร็วเน็ตเฉลี่ยอยู่ที่ \(\mu = 50\) Mbps แต่นักศึกษาสงสัยว่าเร็วจริงตามอ้างหรือไม่ จึงสุ่มทดสอบความเร็ว \(n = 16\) ครั้ง พบความเร็วเฉลี่ย \(\bar{X} = 53\) Mbps และมีส่วนเบี่ยงเบนมาตรฐานตัวอย่าง \(s = 6\) Mbps ที่ระดับนัยสำคัญ \(\alpha = 0.05\) มีหลักฐานเพียงพอที่จะสรุปว่าเน็ตหอพักเร็วกว่า 50 Mbps หรือไม่?
-                </p>
+                <h3 id="exTitle" style="margin: 0 0 8px 0; color: #166534; font-size: 17px;"></h3>
+                <p id="exScenario" style="margin: 0; font-size: 13.5px;"></p>
 
                 <div class="example-grid">
-                    <div class="example-solution">
-                        <b>📝 เฉลยขั้นตอนวิธีคิดอย่างละเอียด:</b><br>
-                        <b>ขั้นที่ 1: ตั้งสมมุติฐาน</b><br>
-                        • \(H_0: \mu = 50\) (เน็ตมีความเร็วปกติ 50 Mbps)<br>
-                        • \(H_1: \mu > 50\) (เน็ตเร็วกว่า 50 Mbps จริง ทดสอบทางขวา)<br><br>
-
-                        <b>ขั้นที่ 2: เลือกสถิติและคำนวณค่า</b><br>
-                        เนื่องจากไม่ทราบ \(\sigma\) ของทั้งหอพัก และ \(n = 16 < 30\) จึงใช้ \(t\)-test (\(df = 16 - 1 = 15\))<br>
-                        \[ t_{\text{cal}} = \frac{\bar{X} - \mu_0}{s / \sqrt{n}} = \frac{53 - 50}{6 / \sqrt{16}} = \frac{3}{1.5} = +2.00 \]
-
-                        <b>ขั้นที่ 3: เปิดตารางหาค่าวิกฤตและตัดสินใจ</b><br>
-                        เปิดตาราง \(t\) ทางขวาที่ \(\alpha = 0.05, df = 15\) ได้ค่าวิกฤต \(t_{\text{crit}} = +1.753\)<br>
-                        เนื่องจาก \(t_{\text{cal}} = 2.00 > 1.753\) (สถิติคำนวณตกในเขตสีแดง)<br><br>
-                        <b>💡 สรุปผล:</b> <b>ปฏิเสธ \(H_0\)</b> ยอมรับว่าเน็ตหอพักมีความเร็วเฉลี่ยมากกว่า 50 Mbps จริงอย่างมีนัยสำคัญทางสถิติที่ 0.05
-                    </div>
-
+                    <div id="exSolution" class="example-solution"></div>
                     <div class="example-chart">
-                        <div style="font-size: 12px; font-weight: bold; color: #166534; margin-bottom: 5px;">
-                            กราฟประกอบตัวอย่างโจทย์
-                        </div>
-                        <div id="examplePlot" style="height: 230px;"></div>
+                        <div id="exPlotTitle" style="font-size: 12px; font-weight: bold; color: #166534; margin-bottom: 5px;"></div>
+                        <div id="examplePlot" style="height: 240px;"></div>
                     </div>
                 </div>
             </div>
@@ -293,6 +504,174 @@
 <script>
     function syncInputs(fromId, toId) {
         document.getElementById(toId).value = document.getElementById(fromId).value;
+    }
+
+    // ฐานข้อมูลตัวอย่างโจทย์จริง 6 รูปแบบ ครอบคลุมทั้ง Z/t และ Right/Left/Two-tailed
+    const testExamples = {
+        "t-right": {
+            title: "📶 ตัวอย่างโจทย์: การทดสอบ t-Test ทางขวา (Right-tailed)",
+            scenario: "<b>สถานการณ์:</b> หอพักโฆษณาว่าความเร็วเน็ตเฉลี่ยอยู่ที่ \\(\\mu = 50\\) Mbps แต่นักศึกษาสงสัยว่าเร็วกว่านั้นจริงหรือไม่ จึงสุ่มทดสอบ \\(n = 16\\) ครั้ง พบความเร็วเฉลี่ย \\(\\bar{X} = 53\\) Mbps และ \\(s = 6\\) Mbps ที่ระดับนัยสำคัญ \\(\\alpha = 0.05\\) จงทดสอบสมมุติฐาน?",
+            solution: `<b>📝 ขั้นตอนวิธีคิดอย่างละเอียด:</b><br>
+                <b>ขั้นที่ 1: ตั้งสมมุติฐาน</b><br>
+                • \\(H_0: \\mu = 50\\) vs \\(H_1: \\mu > 50\\) (ทางขวา)<br>
+                <b>ขั้นที่ 2: คำนวณค่าสถิติทดสอบ</b> (ใช้ t-test เพราะ \\(n=16 < 30\\) และไม่ทราบ \\(\\sigma\\))<br>
+                \\[ t_{\\text{cal}} = \\frac{53 - 50}{6 / \\sqrt{16}} = \\frac{3}{1.5} = +2.00 \\quad (df = 15) \\]<br>
+                <b>ขั้นที่ 3: เปิดตารางและตัดสินใจ</b><br>
+                ตาราง \\(t\\) ทางขวาที่ \\(\\alpha = 0.05, df = 15\\) ได้ค่าวิกฤต \\(t_{\\text{crit}} = +1.753\\)<br>
+                เนื่องจาก \\(t_{\\text{cal}} = 2.00 > 1.753\\) (ตกในเขตสีแดง)<br>
+                <b>💡 สรุปผล:</b> <b>ปฏิเสธ \\(H_0\\)</b> เน็ตหอพักเร็วกว่า 50 Mbps จริงที่ \\(\\alpha=0.05\\)`,
+            plotTitle: "โค้ง t (df=15) ทางขวา",
+            dist: "t", df: 15, crit: 1.753, stat: 2.00, tail: "right"
+        },
+        "t-left": {
+            title: "🔋 ตัวอย่างโจทย์: การทดสอบ t-Test ทางซ้าย (Left-tailed)",
+            scenario: "<b>สถานการณ์:</b> บริษัทมือถืออ้างว่าแบตเตอรี่ใช้งานเฉลี่ยได้ \\(\\mu = 24\\) ชม. แต่นักรีวิวสุ่มตรวจมือถือ \\(n = 12\\) เครื่อง พบว่าใช้งานได้เฉลี่ยเพียง \\(\\bar{X} = 22.2\\) ชม. และ \\(s = 2.5\\) ชม. ที่ระดับ \\(\\alpha = 0.05\\) มีหลักฐานหรือไม่ว่าแบตหมดไวกว่าที่เคลม?",
+            solution: `<b>📝 ขั้นตอนวิธีคิดอย่างละเอียด:</b><br>
+                <b>ขั้นที่ 1: ตั้งสมมุติฐาน</b><br>
+                • \\(H_0: \\mu = 24\\) vs \\(H_1: \\mu < 24\\) (ทางซ้าย)<br>
+                <b>ขั้นที่ 2: คำนวณสถิติทดสอบ t-test</b><br>
+                \\[ t_{\\text{cal}} = \\frac{22.2 - 24}{2.5 / \\sqrt{12}} = \\frac{-1.8}{0.722} = -2.49 \\quad (df = 11) \\]<br>
+                <b>ขั้นที่ 3: เปิดตารางและตัดสินใจ</b><br>
+                ตาราง \\(t\\) ทางซ้ายที่ \\(\\alpha = 0.05, df = 11\\) ได้ค่าวิกฤต \\(t_{\\text{crit}} = -1.796\\)<br>
+                เนื่องจาก \\(t_{\\text{cal}} = -2.49 < -1.796\\) (ทะลุเข้าเขตสีแดงฝั่งซ้าย)<br>
+                <b>💡 สรุปผล:</b> <b>ปฏิเสธ \\(H_0\\)</b> มีหลักฐานเพียงพอว่าแบตหมดไวกว่า 24 ชม. จริง`,
+            plotTitle: "โค้ง t (df=11) ทางซ้าย",
+            dist: "t", df: 11, crit: -1.796, stat: -2.49, tail: "left"
+        },
+        "t-two": {
+            title: "☕ ตัวอย่างโจทย์: การทดสอบ t-Test สองทาง (Two-tailed)",
+            scenario: "<b>สถานการณ์:</b> เครื่องจักรบรรจุกาแฟกระป๋องตั้งค่าไว้ที่ \\(\\mu = 180\\) มล. วิศวกรสุ่มตรวจกาแฟ \\(n = 20\\) กระป๋อง พบค่าเฉลี่ย \\(\\bar{X} = 182.1\\) มล. และ \\(s = 4\\) มล. ที่ระดับ \\(\\alpha = 0.05\\) เครื่องจักรบรรจุกาแฟคลาดเคลื่อนจากมาตรฐานหรือไม่?",
+            solution: `<b>📝 ขั้นตอนวิธีคิดอย่างละเอียด:</b><br>
+                <b>ขั้นที่ 1: ตั้งสมมุติฐาน</b><br>
+                • \\(H_0: \\mu = 180\\) vs \\(H_1: \\mu \\neq 180\\) (สองทาง)<br>
+                <b>ขั้นที่ 2: คำนวณสถิติทดสอบ</b><br>
+                \\[ t_{\\text{cal}} = \\frac{182.1 - 180}{4 / \\sqrt{20}} = \\frac{2.1}{0.894} = +2.35 \\quad (df = 19) \\]<br>
+                <b>ขั้นที่ 3: เปิดตารางแบ่งครึ่งแอลฟา (\\(\\alpha/2 = 0.025\\))</b><br>
+                ได้ค่าวิกฤตสองฝั่ง \\(t_{\\text{crit}} = \\pm 2.093\\)<br>
+                เนื่องจาก \\(t_{\\text{cal}} = 2.35 > +2.093\\) (ตกในเขตสีแดงฝั่งขวา)<br>
+                <b>💡 สรุปผล:</b> <b>ปฏิเสธ \\(H_0\\)</b> เครื่องจักรบรรจุกาแฟคลาดเคลื่อนจาก 180 มล. จริง`,
+            plotTitle: "โค้ง t (df=19) สองทาง",
+            dist: "t", df: 19, crit: 2.093, stat: 2.35, tail: "two"
+        },
+        "z-right": {
+            title: "💡 ตัวอย่างโจทย์: การทดสอบ Z-Test ทางขวา (Right-tailed)",
+            scenario: "<b>สถานการณ์:</b> โรงงานผลิตหลอดไฟประหยัดพลังงานเคลมอายุการใช้งานเฉลี่ย \\(\\mu = 1000\\) ชม. โดยทราบ \\(\\sigma = 120\\) ชม. สุ่มตรวจหลอดไฟขนาดใหญ่ \\(n = 64\\) หลอด พบว่าใช้งานได้เฉลี่ย \\(\\bar{X} = 1030\\) ชม. ที่ \\(\\alpha = 0.05\\) หลอดไฟนี้มีอายุยืนยาวกว่ามาตรฐานเดิมหรือไม่?",
+            solution: `<b>📝 ขั้นตอนวิธีคิดอย่างละเอียด:</b><br>
+                <b>ขั้นที่ 1: ตั้งสมมุติฐาน</b><br>
+                • \\(H_0: \\mu = 1000\\) vs \\(H_1: \\mu > 1000\\) (ทางขวา)<br>
+                <b>ขั้นที่ 2: ใช้ Z-test เพราะทราบ \\(\\sigma\\) และ \\(n=64 \\ge 30\\)</b><br>
+                \\[ Z_{\\text{cal}} = \\frac{1030 - 1000}{120 / \\sqrt{64}} = \\frac{30}{15} = +2.00 \\]<br>
+                <b>ขั้นที่ 3: เปิดตาราง Z ทางขวาที่ \\(\\alpha = 0.05\\)</b><br>
+                ได้ค่าวิกฤต \\(Z_{\\text{crit}} = +1.645\\)<br>
+                เนื่องจาก \\(Z_{\\text{cal}} = 2.00 > +1.645\\) (ตกในเขตสีแดง)<br>
+                <b>💡 สรุปผล:</b> <b>ปฏิเสธ \\(H_0\\)</b> หลอดไฟมีอายุการใช้งานนานกว่า 1,000 ชม. จริงอย่างมีนัยสำคัญ`,
+            plotTitle: "โค้ง Z ทางขวา",
+            dist: "z", df: 0, crit: 1.645, stat: 2.00, tail: "right"
+        },
+        "z-left": {
+            title: "🚗 ตัวอย่างโจทย์: การทดสอบ Z-Test ทางซ้าย (Left-tailed)",
+            scenario: "<b>สถานการณ์:</b> รถยนต์รุ่นหนึ่งมีอัตรากินน้ำมันเฉลี่ย \\(\\mu = 8.5\\) ลิตร/100 กม. ทราบ \\(\\sigma = 1.2\\) ลิตร หลังปรับแต่งเครื่องยนต์ สุ่มทดสอบ \\(n = 50\\) คัน พบว่ากินน้ำมันเฉลี่ยลดลงเหลือ \\(\\bar{X} = 8.2\\) ลิตร ที่ \\(\\alpha = 0.05\\) การปรับแต่งช่วยประหยัดน้ำมันจริงหรือไม่?",
+            solution: `<b>📝 ขั้นตอนวิธีคิดอย่างละเอียด:</b><br>
+                <b>ขั้นที่ 1: ตั้งสมมุติฐาน</b><br>
+                • \\(H_0: \\mu = 8.5\\) vs \\(H_1: \\mu < 8.5\\) (ทางซ้าย)<br>
+                <b>ขั้นที่ 2: คำนวณค่าสถิติ Z-test</b><br>
+                \\[ Z_{\\text{cal}} = \\frac{8.2 - 8.5}{1.2 / \\sqrt{50}} = \\frac{-0.3}{0.170} = -1.76 \\]<br>
+                <b>ขั้นที่ 3: เปิดตาราง Z ทางซ้ายที่ \\(\\alpha = 0.05\\)</b><br>
+                ได้ค่าวิกฤต \\(Z_{\\text{crit}} = -1.645\\)<br>
+                เนื่องจาก \\(Z_{\\text{cal}} = -1.76 < -1.645\\) (ทะลุเข้าเขตสีแดงฝั่งซ้าย)<br>
+                <b>💡 สรุปผล:</b> <b>ปฏิเสธ \\(H_0\\)</b> การปรับแต่งช่วยลดการกินน้ำมันได้อย่างมีนัยสำคัญทางสถิติ`,
+            plotTitle: "โค้ง Z ทางซ้าย",
+            dist: "z", df: 0, crit: -1.645, stat: -1.76, tail: "left"
+        },
+        "z-two": {
+            title: "💊 ตัวอย่างโจทย์: การทดสอบ Z-Test สองทาง (Two-tailed)",
+            scenario: "<b>สถานการณ์:</b> บริษัทยาผลิตยาพาราเซตามอลควบคุมมาตรฐานให้มีตัวยาเฉลี่ย \\(\\mu = 500\\) มก. ทราบ \\(\\sigma = 8\\) มก. ฝ่ายควบคุมคุณภาพสุ่มตรวจยา \\(n = 100\\) เม็ด พบตัวยาเฉลี่ย \\(\\bar{X} = 498.2\\) มก. ที่ \\(\\alpha = 0.05\\) ปริมาณตัวยาผิดเพี้ยนไปจากมาตรฐานหรือไม่?",
+            solution: `<b>📝 ขั้นตอนวิธีคิดอย่างละเอียด:</b><br>
+                <b>ขั้นที่ 1: ตั้งสมมุติฐาน</b><br>
+                • \\(H_0: \\mu = 500\\) vs \\(H_1: \\mu \\neq 500\\) (สองทาง)<br>
+                <b>ขั้นที่ 2: คำนวณค่าสถิติ Z-test</b><br>
+                \\[ Z_{\\text{cal}} = \\frac{498.2 - 500}{8 / \\sqrt{100}} = \\frac{-1.8}{0.8} = -2.25 \\]<br>
+                <b>ขั้นที่ 3: เปิดตาราง Z สองทางที่ \\(\\alpha/2 = 0.025\\)</b><br>
+                ได้ค่าวิกฤต \\(Z_{\\text{crit}} = \\pm 1.960\\)<br>
+                เนื่องจาก \\(Z_{\\text{cal}} = -2.25 < -1.960\\) (ตกในเขตสีแดงฝั่งซ้าย)<br>
+                <b>💡 สรุปผล:</b> <b>ปฏิเสธ \\(H_0\\)</b> ปริมาณตัวยาพาราเซตามอลมีความคลาดเคลื่อนจาก 500 มก. จริง`,
+            plotTitle: "โค้ง Z สองทาง",
+            dist: "z", df: 0, crit: 1.960, stat: -2.25, tail: "two"
+        }
+    };
+
+    function updateExampleByTest() {
+        const statType = document.getElementById('statType').value;
+        const tailType = document.getElementById('tailType').value;
+        const key = `${statType}-${tailType}`;
+        const ex = testExamples[key];
+
+        document.getElementById('exTitle').innerHTML = ex.title;
+        document.getElementById('exScenario').innerHTML = ex.scenario;
+        document.getElementById('exSolution').innerHTML = ex.solution;
+        document.getElementById('exPlotTitle').innerText = ex.plotTitle;
+
+        // วาดกราฟประกอบตัวอย่างโจทย์ใหม่ทุกครั้งที่สลับ
+        let x = [];
+        let y = [];
+        for (let v = -3.8; v <= 3.8; v += 0.05) {
+            x.push(v);
+            y.push(ex.dist === 'z' ? jStat.normal.pdf(v, 0, 1) : jStat.studentt.pdf(v, ex.df));
+        }
+
+        const traces = [
+            {
+                x: x, y: y,
+                type: 'scatter', mode: 'lines',
+                line: { color: '#16a34a', width: 2 },
+                name: 'การแจกแจง'
+            }
+        ];
+
+        // ระบายสีเขตวิกฤตตามโจทย์
+        if (ex.tail === 'right' || ex.tail === 'two') {
+            const rx = x.filter(v => v >= Math.abs(ex.crit));
+            const ry = rx.map(v => ex.dist === 'z' ? jStat.normal.pdf(v, 0, 1) : jStat.studentt.pdf(v, ex.df));
+            traces.push({
+                x: [Math.abs(ex.crit), ...rx, rx[rx.length - 1]],
+                y: [0, ...ry, 0],
+                fill: 'toself',
+                fillcolor: 'rgba(220, 38, 38, 0.45)',
+                line: { color: 'transparent' }
+            });
+        }
+        if (ex.tail === 'left' || ex.tail === 'two') {
+            const lx = x.filter(v => v <= -Math.abs(ex.crit));
+            const ly = lx.map(v => ex.dist === 'z' ? jStat.normal.pdf(v, 0, 1) : jStat.studentt.pdf(v, ex.df));
+            traces.push({
+                x: [lx[0], ...lx, -Math.abs(ex.crit)],
+                y: [0, ...ly, 0],
+                fill: 'toself',
+                fillcolor: 'rgba(220, 38, 38, 0.45)',
+                line: { color: 'transparent' }
+            });
+        }
+
+        // ปักเส้นสถิติคำนวณของโจทย์
+        traces.push({
+            x: [ex.stat, ex.stat],
+            y: [0, (ex.dist === 'z' ? jStat.normal.pdf(ex.stat, 0, 1) : jStat.studentt.pdf(ex.stat, ex.df)) * 1.3],
+            type: 'scatter', mode: 'lines+text',
+            line: { color: '#ea580c', width: 2.5 },
+            text: ['', ` สถิติ (${ex.stat.toFixed(2)})`],
+            textposition: 'top center'
+        });
+
+        Plotly.newPlot('examplePlot', traces, {
+            margin: { t: 15, r: 10, l: 30, b: 30 },
+            xaxis: { title: (ex.dist === 'z' ? 'คะแนน Z' : 'คะแนน t') },
+            yaxis: { showticklabels: false },
+            showlegend: false
+        }, { responsive: true, displayModeBar: false });
+
+        if (window.MathJax && MathJax.typeset) {
+            MathJax.typeset(["#exScenario", "#exSolution"]);
+        }
     }
 
     function runTest() {
@@ -423,64 +802,17 @@
             line: { color: '#ea580c', width: 3 }
         });
 
-        const layout = {
+        Plotly.newPlot('testPlot', traces, {
             margin: { t: 20, r: 20, l: 35, b: 35 },
             xaxis: { title: (statType === 'z' ? 'ค่า Z' : 'ค่า t') },
             yaxis: { showticklabels: false },
             legend: { x: 0.65, y: 1 }
-        };
-
-        Plotly.newPlot('testPlot', traces, layout, { responsive: true, displayModeBar: false });
-    }
-
-    function drawExamplePlot() {
-        const df = 15;
-        let x = [];
-        let y = [];
-        for (let v = -3.5; v <= 3.5; v += 0.05) {
-            x.push(v);
-            y.push(jStat.studentt.pdf(v, df));
-        }
-
-        const crit = 1.753;
-        const stat = 2.00;
-
-        let xFill = x.filter(v => v >= crit);
-        let yFill = xFill.map(v => jStat.studentt.pdf(v, df));
-
-        Plotly.newPlot('examplePlot', [
-            {
-                x: x, y: y,
-                type: 'scatter', mode: 'lines',
-                line: { color: '#16a34a', width: 2 },
-                name: 'โค้ง t (df=15)'
-            },
-            {
-                x: [crit, ...xFill, xFill[xFill.length - 1]],
-                y: [0, ...yFill, 0],
-                fill: 'toself',
-                fillcolor: 'rgba(220, 38, 38, 0.45)',
-                line: { color: 'transparent' },
-                name: 'เขตวิกฤต (t > 1.753)'
-            },
-            {
-                x: [stat, stat],
-                y: [0, jStat.studentt.pdf(stat, df) * 1.3],
-                type: 'scatter', mode: 'lines+text',
-                line: { color: '#ea580c', width: 2.5 },
-                text: ['', ' t_cal = 2.00'],
-                textposition: 'top center'
-            }
-        ], {
-            margin: { t: 15, r: 10, l: 30, b: 30 },
-            xaxis: { title: 'คะแนน t' },
-            yaxis: { showticklabels: false },
-            showlegend: false
         }, { responsive: true, displayModeBar: false });
     }
 
+    // เริ่มทำงานครั้งแรก
     runTest();
-    drawExamplePlot();
+    updateExampleByTest();
 </script>
 
 </body>
